@@ -2,6 +2,7 @@
 Wordpress
  - [Forced Trailing Slash](#wp-fts)
  - [Pardot/SF Integration](#wp-crm)
+ - [Lando Multisite](#wp-lando-multi)
 
 Drupal 7
 - [Forced Trailing Slash](#d7-fts)
@@ -13,6 +14,7 @@ Drupal 8
 - [Pardot/SF Integration](#d8-pardot)
 - [No CI installation](#no-ci-install)
 - [Redirect Domain](#d8-redirect-domain)
+
 
 
 ### <a name="wp-fts"></a>WP Forced Trailing Slash
@@ -46,6 +48,26 @@ Drupal 8
      Content -> Forms
      Post to form
 ```
+
+### <a name="wp-lando-multi"></a>Lando WP Multisite
+```
+Getting a local instance up and running with git access to wpengine is detailed here:
+https://wpengine.com/git/
+
+once you have the site copied down, do the typical: lando init (wordpress) and connect via
+git per the previous lines requirements.
+
+the .lando.yml file for multiple sites running off one WP instance:
+        name: snmulti
+        recipe: wordpress
+        config:
+          webroot: .
+        proxy:
+          appserver:
+            - site1.lndo.site
+            - site2.lndo.site
+```
+
 
 ### <a name="d7-fts"></a>Drupal 7 Forced Trailing Slash
 
