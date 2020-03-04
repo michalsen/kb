@@ -41,6 +41,7 @@ Drupal 8
 ### <a name="d7-fts"></a>Drupal 7 Forced Trailing Slash
 
 #### .htaccess
+```
   RewriteBase /
   RewriteCond %{REQUEST_FILENAME} !-f
   RewriteCond %{REQUEST_URI} !(.*)/$
@@ -49,7 +50,7 @@ Drupal 8
   RewriteCond %{REQUEST_URI} !^/admin/(.*)$
   RewriteCond %{HTTP_HOST} ^www\.DOMAIN\.com$ [NC]
   RewriteRule ^(.*)$ https://www.DOMAIN.com/$1/ [L,R=301]
-
+```
 
 
 ### <a name="d7-pardot"></a>Drupal 7 Pardot Integration
