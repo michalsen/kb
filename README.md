@@ -3,6 +3,7 @@
  - [Forced Trailing Slash](#wp-fts)
  - [Pardot/SF Integration](#wp-crm)
  - [Lando Multisite](#wp-lando-multi)
+ - [Harden WP](#harden-wp)
 
 
 ## Drupal 7
@@ -85,6 +86,211 @@ the .lando.yml file for multiple sites running off one WP instance:
             - site1.lndo.site
             - site2.lndo.site
 ```
+
+### <a name="harden-wp"></a>Harden WP
+.htaccess
+```
+##
+# Disable Directory Browsing
+##
+Options All -Indexes
+```
+(this stops directory listing for directories that have no index)
+
+Set user Display Name for administrators, so that scanners can not see who administrators are
+
+Remove WP Version numbers from source code, that may reveal a vulnerability
+```
+// yourtheme/functions.php
+/* Hide WP version strings from scripts and styles
+ * @return {string} $src
+ * @filter script_loader_src
+ * @filter style_loader_src
+ */
+function enigma_2015_remove_wp_version_strings( $src ) {
+    global $wp_version;
+    parse_str(parse_url($src, PHP_URL_QUERY), $query);
+    if ( !empty($query['ver']) && $query['ver'] === $wp_version ) {
+        $src = remove_query_arg('ver', $src);
+    }
+    return $src;
+}
+add_filter( 'script_loader_src', 'enigma_2015_remove_wp_version_strings' );
+add_filter( 'style_loader_src', 'enigma_2015_remove_wp_version_strings' );
+
+/* Hide WP version strings from generator meta tag */
+function wpmudev_remove_version() {
+    return '';
+}
+add_filter('the_generator', 'wpmudev_remove_version');
+```
+
+wp-config.php Set debug messages to false
+```
+define('WP_DEBUG', false);
+define('WP_DEBUG_LOG', false);
+define('WP_DEBUG_DISPLAY', false);
+```
+
+ensure salt keys are defined, and provide [fresh keys](#http://api.wordpress.org/secret-key/1.1/salt/)
+
+change database prefix if value is default (will also need to change table prefix's in the database)
+
+#### plugins
+- wp cerber
+  - harden login page
+- updraftplus
+  - backup/restore tool
+- stop user enumeration
+  - removes the ability of a scanner to gather the user ids
+- activity log
+  - creates activity logs of users and events
+  - can create alerts to custom events
+- wp ban
+  - bans bad actors
+- bbq
+  - block bad queries from automated hacking scanners
+- Blackhole for Bad Bots
+  - automated blocking for the above bbq
+- Exploit Scanner
+  - scan files periodically looking for exploited code
+```
+curl -O https://downloads.wordpress.org/plugin/wp-cerber.5.0.zip
+curl -O https://downloads.wordpress.org/plugin/updraftplus.1.13.5.zip
+curl -O https://downloads.wordpress.org/plugin/stop-user-enumeration.1.3.10.zip
+curl -O https://downloads.wordpress.org/plugin/aryo-activity-log.2.3.4.zip
+curl -O https://downloads.wordpress.org/plugin/wp-ban.1.69.zip
+curl -O https://downloads.wordpress.org/plugin/block-bad-queries.20170730.zip
+curl -O https://downloads.wordpress.org/plugin/blackhole-bad-bots.1.7.1.zip
+curl -O https://downloads.wordpress.org/plugin/exploit-scanner.1.5.2.zip
+curl -O https://downloads.wordpress.org/plugin/my-wp-health-check.1.4.2.zip
+```
+
+Stop Hotlinking
+```
+##
+# Stop Hot Linking
+##
+RewriteCond %{HTTP_REFERER} !^$
+RewriteCond %{HTTP_REFERER} !^https?://(.+\.)?<DOMAIN>.com [NC]
+RewriteRule \.(jpe?g|png|gif|bmp|pdf)$ - [NC,F,L]
+```
+
+Installation Page
+```
+chmod 400 wp-admin/install.php
+```
+
+Stop automated spam
+```
+##
+# Stop Automated Spam
+##
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteCond %{REQUEST_METHOD} POST
+  RewriteCond %{HTTP_USER_AGENT} ^$ [OR]
+  RewriteCond %{HTTP_REFERER} !<DOMAIN> [NC]  
+  RewriteCond %{REQUEST_URI} /wp-comments-post\.php [NC]
+  RewriteRule .* - [F,L]
+</IfModule>
+```
+
+6G Firewall
+```
+# 6G FIREWALL/BLACKLIST
+# @ https://perishablepress.com/6g/
+
+# 6G:[QUERY STRINGS]
+<IfModule mod_rewrite.c>
+	RewriteEngine On
+	RewriteCond %{QUERY_STRING} (eval\() [NC,OR]
+	RewriteCond %{QUERY_STRING} (127\.0\.0\.1) [NC,OR]
+	RewriteCond %{QUERY_STRING} ([a-z0-9]{2000,}) [NC,OR]
+	RewriteCond %{QUERY_STRING} (javascript:)(.*)(;) [NC,OR]
+	RewriteCond %{QUERY_STRING} (base64_encode)(.*)(\() [NC,OR]
+	RewriteCond %{QUERY_STRING} (GLOBALS|REQUEST)(=|\[|%) [NC,OR]
+	RewriteCond %{QUERY_STRING} (<|%3C)(.*)script(.*)(>|%3) [NC,OR]
+	RewriteCond %{QUERY_STRING} (\\|\.\.\.|\.\./|~|`|<|>|\|) [NC,OR]
+	RewriteCond %{QUERY_STRING} (boot\.ini|etc/passwd|self/environ) [NC,OR]
+	RewriteCond %{QUERY_STRING} (thumbs?(_editor|open)?|tim(thumb)?)\.php [NC,OR]
+	RewriteCond %{QUERY_STRING} (\'|\")(.*)(drop|insert|md5|select|union) [NC]
+	RewriteRule .* - [F]
+</IfModule>
+
+# 6G:[REQUEST METHOD]
+<IfModule mod_rewrite.c>
+	RewriteCond %{REQUEST_METHOD} ^(connect|debug|move|put|trace|track) [NC]
+	RewriteRule .* - [F]
+</IfModule>
+
+# 6G:[REFERRERS]
+<IfModule mod_rewrite.c>
+	RewriteCond %{HTTP_REFERER} ([a-z0-9]{2000,}) [NC,OR]
+	RewriteCond %{HTTP_REFERER} (semalt.com|todaperfeita) [NC]
+	RewriteRule .* - [F]
+</IfModule>
+
+# 6G:[REQUEST STRINGS]
+<IfModule mod_alias.c>
+	RedirectMatch 403 (?i)([a-z0-9]{2000,})
+	RedirectMatch 403 (?i)(https?|ftp|php):/
+	RedirectMatch 403 (?i)(base64_encode)(.*)(\()
+	RedirectMatch 403 (?i)(=\\\'|=\\%27|/\\\'/?)\.
+	RedirectMatch 403 (?i)/(\$(\&)?|\*|\"|\.|,|&|&amp;?)/?$
+	RedirectMatch 403 (?i)(\{0\}|\(/\(|\.\.\.|\+\+\+|\\\"\\\")
+	RedirectMatch 403 (?i)(~|`|<|>|:|;|,|%|\\|\s|\{|\}|\[|\]|\|)
+	RedirectMatch 403 (?i)/(=|\$&|_mm|cgi-|etc/passwd|muieblack)
+	RedirectMatch 403 (?i)(&pws=0|_vti_|\(null\)|\{\$itemURL\}|echo(.*)kae|etc/passwd|eval\(|self/environ)
+	RedirectMatch 403 (?i)\.(aspx?|bash|bak?|cfg|cgi|dll|exe|git|hg|ini|jsp|log|mdb|out|sql|svn|swp|tar|rar|rdf)$
+	RedirectMatch 403 (?i)/(^$|(wp-)?config|mobiquo|phpinfo|shell|sqlpatch|thumb|thumb_editor|thumbopen|timthumb|webshell)\.php
+</IfModule>
+
+# 6G:[USER AGENTS]
+<IfModule mod_setenvif.c>
+	SetEnvIfNoCase User-Agent ([a-z0-9]{2000,}) bad_bot
+	SetEnvIfNoCase User-Agent (archive.org|binlar|casper|checkpriv|choppy|clshttp|cmsworld|diavol|dotbot|extract|feedfinder|flicky|g00g1e|harvest|heritrix|httrack|kmccrew|loader|miner|nikto|nutch|planetwork|postrank|purebot|pycurl|python|seekerspider|siclab|skygrid|sqlmap|sucker|turnit|vikspider|winhttp|xxxyy|youda|zmeu|zune) bad_bot
+
+	# Apache < 2.3
+	<IfModule !mod_authz_core.c>
+		Order Allow,Deny
+		Allow from all
+		Deny from env=bad_bot
+	</IfModule>
+
+	# Apache >= 2.3
+	<IfModule mod_authz_core.c>
+		<RequireAll>
+			Require all Granted
+			Require not env bad_bot
+		</RequireAll>
+	</IfModule>
+</IfModule>
+
+# 6G:[BAD IPS]
+<Limit GET HEAD OPTIONS POST PUT>
+	Order Allow,Deny
+	Allow from All
+	# uncomment/edit/repeat next line to block IPs
+	# Deny from 123.456.789
+</Limit>
+```
+
+Controlling Proxy Access
+```
+RewriteEngine on
+RewriteCond %{HTTP:VIA}                 !^$ [OR]
+RewriteCond %{HTTP:FORWARDED}           !^$ [OR]
+RewriteCond %{HTTP:USERAGENT_VIA}       !^$ [OR]
+RewriteCond %{HTTP:X_FORWARDED_FOR}     !^$ [OR]
+RewriteCond %{HTTP:PROXY_CONNECTION}    !^$ [OR]
+RewriteCond %{HTTP:XPROXY_CONNECTION}   !^$ [OR]
+RewriteCond %{HTTP:HTTP_PC_REMOTE_ADDR} !^$ [OR]
+RewriteCond %{HTTP:HTTP_CLIENT_IP}      !^$
+RewriteRule ^(.*)$ - [F]
+```
+
+
 
 
 ### <a name="d7-fts"></a>Drupal 7 Forced Trailing Slash
