@@ -56,6 +56,8 @@ RewriteBase /
  RewriteRule ^(.*)$ https://www.DOMAIN.com/$1/ [L,R=301]
 ```
 
+__________________
+
 ### <a name="wp-crm"></a>WP CRM Integration
 #### Gravity Forms
 ```
@@ -67,6 +69,8 @@ RewriteBase /
      Content -> Forms
      Post to form
 ```
+
+__________________
 
 ### <a name="wp-lando-multi"></a>Lando WP Multisite
 ```
@@ -86,6 +90,8 @@ the .lando.yml file for multiple sites running off one WP instance:
             - site1.lndo.site
             - site2.lndo.site
 ```
+
+__________________
 
 ### <a name="harden-wp"></a>Harden WP
 .htaccess
@@ -292,6 +298,8 @@ RewriteRule ^(.*)$ - [F]
 
 
 
+__________________
+
 
 ### <a name="d7-fts"></a>Drupal 7 Forced Trailing Slash
 
@@ -323,8 +331,12 @@ if (!preg_match('/^\/$/', $_SERVER['REQUEST_URI']) && php_sapi_name() != 'cli') 
 }
 ```
 
+__________________
+
 ### <a name="d7-pardot"></a>Drupal 7 Pardot Integration
 
+
+__________________
 
 ### <a name="d7-mscrm"></a>Drupal 7 MS CRM Integration
 ```php
@@ -559,6 +571,9 @@ if (isset($_ENV['PANTHEON_ENVIRONMENT']) && ($_ENV['PANTHEON_ENVIRONMENT'] === '
   }
 }
 ```
+
+
+__________________
 
 ### <a name="htaccess-speed-rules"></a>.htaccess Speed Rules
 ```
