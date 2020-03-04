@@ -12,7 +12,7 @@ Drupal 7
 Drupal 8
 - [Forced Trailing Slash](#d8-fts)
 - [Pardot/SF Integration](#d8-pardot)
-
+- [No CI installation](#no-ci-install)
 
 
 ### <a name="wp-fts"></a>WP Forced Trailing Slash
@@ -36,7 +36,7 @@ Drupal 8
 ```
 
 ### <a name="wp-crm"></a>WP CRM Integration
-####Gravity Forms
+#### Gravity Forms
 ```
      Settings -> Confirmations
      Redirecct
@@ -196,3 +196,114 @@ function getcrmoptions() {
 
 
 ### <a name="d8-pardot"></a>Drupal 8 Pardot Integration
+
+### <a name="no-ci-install"></a>No CI D8 Install
+```
+
+terminus site:create SITENAME 'SITENAME' empty
+
+
+git clone git@github.com:pantheon-systems/example-drops-8-composer.git SITENAME
+git clone https://github.com/pantheon-systems/example-drops-8-composer.git SITENAME
+
+cd ericd8
+
+terminus connection:info SITENAME --field=git_url =
+git remote set-url origin SSH.GIT
+
+Delete the following files/directories:
+scripts/github
+scripts/gitlab
+.circleci
+.ci
+tests
+bitbucket-pipelines.yml
+build-providers.json
+.gitlab-ci.yml
+
+Modify composer.json:
+  Remove all dependencies in the require-dev section.
+  Update the scripts section to remove the lint, code-sniff, and unit-test lines.
+
+Remove the following section from pantheon.yml:
+  workflow
+
+composer update
+composer install
+
+To make it compatible with this manual method, you need to edit the .gitignore file and remove everything above the :: cut :: section.
+
+terminus connection:set SITENAME.dev git
+git add . ; git commit -m'first' ; git push --force
+terminus connection:set SITENAME.dev sftp
+terminus drush SITENAME.dev -- site-install -y
+terminus drush SITENAME.dev uli
+
+
+.lando.yml
+name: ericd8
+recipe: pantheon
+config:
+  webroot: web
+  framework: drupal
+  site: SITENAME
+  id: SITEID
+
+lando start
+
+
+
+composer clear-cache
+
+
+composer.json
+    "repositories": [
+        {
+            "type": "composer",
+            "url": "https://packages.drupal.org/8"
+        },
+  --- >      {
+            "type": "package",
+            "package": {
+                "name": "em/d8theme",
+                "version": "master",
+                "type": "drupal-theme",
+                "source": {
+                    "url": "https://github.com/michalsen/d8theme.git",
+                    "type": "git",
+                    "reference": "master"
+                }
+            }
+        } < ---
+    ],
+    "require": {
+        "php": ">=7.0.8",
+        "composer/installers": "^1.0.20",
+        "cweagans/composer-patches": "^1.0",
+        "drupal-composer/drupal-scaffold": "^2.0.1",
+        "drupal/address": "^1.7",
+        "drupal/config_direct_save": "^1.0",
+        "drupal/config_installer": "^1.0",
+        "drupal/console": "^1",
+        "drupal/core": "^8.6.15",
+        "drush-ops/behat-drush-endpoint": "^9.3",
+        "drush/drush": "~8.3",
+        "pantheon-systems/quicksilver-pushback": "^2",
+        "rvtraveller/qs-composer-installer": "^1.1",
+        "webflo/drupal-core-strict": "^8.6.15",
+        "zaporylie/composer-drupal-optimizations": "^1.0",
+  --- >   "em/d8theme": "dev-master"
+    },
+
+
+composer.json
+    "minimum-stability": "dev",
+
+#
+composer require drupal/admin_toolbar
+composer require drupal/webform
+composer require drupal/pathauto
+composer require drupal/redirect
+composer require drupal/smtp
+composer require drupal/image_effects
+```
