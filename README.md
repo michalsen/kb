@@ -241,7 +241,7 @@ terminus drush SITENAME.dev uli
 
 
 .lando.yml
-name: ericd8
+name: d8
 recipe: pantheon
 config:
   webroot: web
@@ -261,20 +261,7 @@ composer.json
         {
             "type": "composer",
             "url": "https://packages.drupal.org/8"
-        },
-  --- >      {
-            "type": "package",
-            "package": {
-                "name": "em/d8theme",
-                "version": "master",
-                "type": "drupal-theme",
-                "source": {
-                    "url": "https://github.com/michalsen/d8theme.git",
-                    "type": "git",
-                    "reference": "master"
-                }
-            }
-        } < ---
+        }
     ],
     "require": {
         "php": ">=7.0.8",
@@ -291,8 +278,7 @@ composer.json
         "pantheon-systems/quicksilver-pushback": "^2",
         "rvtraveller/qs-composer-installer": "^1.1",
         "webflo/drupal-core-strict": "^8.6.15",
-        "zaporylie/composer-drupal-optimizations": "^1.0",
-  --- >   "em/d8theme": "dev-master"
+        "zaporylie/composer-drupal-optimizations": "^1.0"
     },
 
 
