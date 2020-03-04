@@ -12,6 +12,7 @@ Drupal 8
 - [Forced Trailing Slash](#d8-fts)
 - [Pardot/SF Integration](#d8-pardot)
 - [No CI installation](#no-ci-install)
+- [Redirect Domain](#d8-redirect-domain)
 
 
 ### <a name="wp-fts"></a>WP Forced Trailing Slash
@@ -295,4 +296,20 @@ composer require drupal/pathauto
 composer require drupal/redirect
 composer require drupal/smtp
 composer require drupal/image_effects
+```
+
+### <a name="d8-redirect-domain"></a>Drupal 8 Redirect Domain
+```
+if (isset($_ENV['PANTHEON_ENVIRONMENT']) && ($_ENV['PANTHEON_ENVIRONMENT'] === 'live') && (php_sapi_name() != "cli")) {
+  if (preg_match('/OLDDOMAIN/', $_SERVER['HTTP_HOST'])) {
+    header('HTTP/1.0 301 Moved Permanently');
+    header('Location: https://www.NEWDOMAIN.com/PAGE');
+
+    # Name transaction "redirect" in New Relic for improved reporting (optional)
+    if (extension_loaded('newrelic')) {
+      newrelic_name_transaction("redirect");
+    }
+    exit();
+  }
+}
 ```
