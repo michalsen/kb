@@ -1,4 +1,3 @@
-3/4/2020
 
 Wordpress
  - [Forced Trailing Slash](#wp-fts)
@@ -199,7 +198,7 @@ function getcrmoptions() {
 ```
 webform->settings->Emails/Handlers->Add Handler
 completed URL is Pardot url
-Submission Data is field mapping 
+Submission Data is field mapping
 ```
 ### <a name="no-ci-install"></a>No CI D8 Install
 ```
