@@ -38,13 +38,13 @@ Drupal 8
 ### <a name="wp-crm"></a>WP CRM Integration
 ####Gravity Forms
 ```
-     -Settings -> Confirmations
-     -Redirecct
-     -Redirect URL
-     -Redirect Query String
+     Settings -> Confirmations
+     Redirecct
+     Redirect URL
+     Redirect Query String
      Salesforce
-     -Content -> Forms
-     -Post to form
+     Content -> Forms
+     Post to form
 ```
 
 ### <a name="d7-fts"></a>Drupal 7 Forced Trailing Slash
