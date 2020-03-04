@@ -196,7 +196,11 @@ function getcrmoptions() {
 
 
 ### <a name="d8-pardot"></a>Drupal 8 Pardot Integration
-
+```
+webform->settings->Emails/Handlers->Add Handler
+completed URL is Pardot url
+Submission Data is field mapping 
+```
 ### <a name="no-ci-install"></a>No CI D8 Install
 ```
 
