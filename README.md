@@ -36,6 +36,16 @@ Drupal 8
      }
    }
 ```
+#### .htaccess
+```
+RewriteBase /
+ RewriteCond %{REQUEST_FILENAME} !-f
+ RewriteCond %{REQUEST_URI} !(.*)/$
+ RewriteCond %{REQUEST_URI} !/sites/default/files/(.*)$
+ RewriteCond %{REQUEST_URI} !^/admin/(.*)$
+ RewriteCond %{HTTP_HOST} ^www\.DOMAIN\.com$ [NC]
+ RewriteRule ^(.*)$ https://www.DOMAIN.com/$1/ [L,R=301]
+```
 
 ### <a name="wp-crm"></a>WP CRM Integration
 #### Gravity Forms
