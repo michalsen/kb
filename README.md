@@ -1,20 +1,28 @@
 
-Wordpress
+## Wordpress
  - [Forced Trailing Slash](#wp-fts)
  - [Pardot/SF Integration](#wp-crm)
  - [Lando Multisite](#wp-lando-multi)
 
-Drupal 7
+
+## Drupal 7
 - [Forced Trailing Slash](#d7-fts)
 - [Pardot/SF Integration](#d7-pardot)
 - [MS CRM Integration](#d7-mscrm)
 
-Drupal 8
+## Drupal 8
 - [Forced Trailing Slash](#d8-fts)
 - [Pardot/SF Integration](#d8-pardot)
 - [No CI installation](#no-ci-install)
 - [Redirect Domain](#d8-redirect-domain)
 
+## Speed
+- [.htaccess speed rules](#htaccess-speed-rules)
+
+## Resources
+- [.htaccess snippets](#https://github.com/phanan/htaccess)
+- [Pantheon No CI](#https://pantheon.io/docs/guides/drupal-8-composer-no-ci)
+- [Private repos in Composer](#https://support.acquia.com/hc/en-us/articles/360004276834-How-to-access-Private-Repos-using-Composer)
 
 
 ### <a name="wp-fts"></a>WP Forced Trailing Slash
@@ -344,4 +352,64 @@ if (isset($_ENV['PANTHEON_ENVIRONMENT']) && ($_ENV['PANTHEON_ENVIRONMENT'] === '
     exit();
   }
 }
+```
+
+### <a name="htaccess-speed-rules"></a>.htaccess Speed Rules
+```
+<ifModule mod_gzip.c>
+mod_gzip_on Yes
+mod_gzip_dechunk Yes
+mod_gzip_item_include file .(html?|txt|css|js|php|pl)$
+mod_gzip_item_include handler ^cgi-script$
+mod_gzip_item_include mime ^text/.*
+mod_gzip_item_include mime ^application/x-javascript.*
+mod_gzip_item_exclude mime ^image/.*
+mod_gzip_item_exclude rspheader ^Content-Encoding:.*gzip.*
+</ifModule>
+
+AddOutputFilterByType DEFLATE text/plain
+AddOutputFilterByType DEFLATE text/html
+AddOutputFilterByType DEFLATE text/xml
+AddOutputFilterByType DEFLATE text/css
+AddOutputFilterByType DEFLATE application/xml
+AddOutputFilterByType DEFLATE application/xhtml+xml
+AddOutputFilterByType DEFLATE application/rss+xml
+AddOutputFilterByType DEFLATE application/javascript
+AddOutputFilterByType DEFLATE application/x-javascript
+
+# BEGIN Expire headers
+<ifModule mod_expires.c>
+        ExpiresActive On
+        ExpiresDefault "access plus 2 days"
+        ExpiresByType image/x-icon "access plus 2592000 seconds"
+        ExpiresByType image/jpeg "access plus 2592000 seconds"
+        ExpiresByType image/png "access plus 2592000 seconds"
+        ExpiresByType image/gif "access plus 2592000 seconds"
+        ExpiresByType application/x-shockwave-flash "access plus 2592000 seconds"
+        ExpiresByType text/css "access plus 604800 seconds"
+        ExpiresByType text/javascript "access plus 216000 seconds"
+        ExpiresByType application/javascript "access plus 216000 seconds"
+        ExpiresByType application/x-javascript "access plus 216000 seconds"
+        ExpiresByType text/html "access plus 600 seconds"
+        ExpiresByType application/xhtml+xml "access plus 600 seconds"
+</ifModule>
+# END Expire headers
+
+
+# BEGIN Caching
+<ifModule mod_headers.c>
+  <filesMatch "\\.(ico|pdf|flv|jpg|jpeg|png|gif|swf|svg)$">
+    Header set Cache-Control "max-age=2592000, public"
+  </filesMatch>
+  <filesMatch "\\.(css|js)$">
+    Header set Cache-Control "max-age=604800, public"
+  </filesMatch>
+  <filesMatch "\\.(xml|txt)$">
+    Header set Cache-Control "max-age=216000, public, must-revalidate"
+  </filesMatch>
+  <filesMatch "\\.(html|htm|php)$">
+    Header set Cache-Control "max-age=3600, public, must-revalidate"
+  </filesMatch>
+</ifModule>
+# END Caching
 ```
