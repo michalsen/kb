@@ -21,9 +21,9 @@
 - [.htaccess speed rules](#htaccess-speed-rules)
 
 ## Resources
-- [.htaccess snippets](#https://github.com/phanan/htaccess)
-- [Pantheon No CI](#https://pantheon.io/docs/guides/drupal-8-composer-no-ci)
-- [Private repos in Composer](#https://support.acquia.com/hc/en-us/articles/360004276834-How-to-access-Private-Repos-using-Composer)
+- [.htaccess snippets](https://github.com/phanan/htaccess)
+- [Pantheon No CI](https://pantheon.io/docs/guides/drupal-8-composer-no-ci)
+- [Private repos in Composer](https://support.acquia.com/hc/en-us/articles/360004276834-How-to-access-Private-Repos-using-Composer)
 
 
 ### <a name="wp-fts"></a>WP Forced Trailing Slash
