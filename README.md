@@ -81,7 +81,7 @@ __________________
      Content -> Forms
      Post to form
 ```
-
+[Back to Top](#top)
 __________________
 
 ### <a name="wp-lando-multi"></a>Lando WP Multisite
@@ -103,6 +103,7 @@ the .lando.yml file for multiple sites running off one WP instance:
             - site2.lndo.site
 ```
 
+[Back to Top](#top)
 __________________
 
 ### <a name="harden-wp"></a>Harden WP
@@ -309,7 +310,7 @@ RewriteRule ^(.*)$ - [F]
 ```
 
 
-
+[Back to Top](#top)
 __________________
 
 
@@ -343,16 +344,21 @@ if (!preg_match('/^\/$/', $_SERVER['REQUEST_URI']) && php_sapi_name() != 'cli') 
 }
 ```
 
+[Back to Top](#top)
 __________________
 
 ### <a name="d7-pardot"></a>Drupal 7 Pardot Integration
 
+
+[Back to Top](#top)
 __________________
 
 ### <a name="htaccess-redirects"></a>Redirects
 ```
 Redirect 301 /old /new
 ```
+
+[Back to Top](#top)
 __________________
 
 ### <a name="force-https"></a>Force HTTPS
@@ -361,6 +367,8 @@ RewriteEngine On
 RewriteCond %{HTTPS} off
 RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 ```
+
+[Back to Top](#top)
 __________________
 
 ### <a name="force-https"></a>Force Lower Case
@@ -372,6 +380,8 @@ if (preg_match('/[A-Z]/', $_SERVER['REQUEST_URI'])) {
   exit();
 }
 ```
+
+[Back to Top](#top)
 __________________
 
 ### <a name="force-www"></a>Force WWW
@@ -381,6 +391,7 @@ RewriteCond %{HTTPS} off
 RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 ```
 
+[Back to Top](#top)
 __________________
 
 ### <a name="d7-mscrm"></a>Drupal 7 MS CRM Integration
@@ -617,7 +628,7 @@ if (isset($_ENV['PANTHEON_ENVIRONMENT']) && ($_ENV['PANTHEON_ENVIRONMENT'] === '
 }
 ```
 
-
+[Back to Top](#top)
 __________________
 
 ### <a name="htaccess-speed-rules"></a>.htaccess Speed Rules
@@ -679,3 +690,5 @@ AddOutputFilterByType DEFLATE application/x-javascript
 </ifModule>
 # END Caching
 ```
+
+[Back to Top](#top)
