@@ -20,10 +20,17 @@
 ## Speed
 - [.htaccess speed rules](#htaccess-speed-rules)
 
+## .htaccess snippets
+- [Redirects](#htaccess-redirects)
+- [Force HTTPS](#force-https)
+- [Force Lower Case URLS](#force-lower-case)
+- [Force WWW](#force-www)
+
 ## Resources
 - [.htaccess snippets](https://github.com/phanan/htaccess)
 - [Pantheon No CI](https://pantheon.io/docs/guides/drupal-8-composer-no-ci)
 - [Private repos in Composer](https://support.acquia.com/hc/en-us/articles/360004276834-How-to-access-Private-Repos-using-Composer)
+
 
 
 ________
@@ -339,6 +346,39 @@ __________________
 
 ### <a name="d7-pardot"></a>Drupal 7 Pardot Integration
 
+__________________
+
+### <a name="htaccess-redirects"></a>Redirects
+```
+Redirect 301 /old /new
+```
+__________________
+
+### <a name="force-https"></a>Force HTTPS
+```
+RewriteEngine On
+RewriteCond %{HTTPS} off
+RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+```
+__________________
+
+### <a name="force-https"></a>Force Lower Case
+```
+/* Force Lower Case URLs */
+if (preg_match('/[A-Z]/', $_SERVER['REQUEST_URI'])) {
+  header("HTTP/1.1 301 Moved Permanently");
+  header("location: https://" . $primary_domain . strtolower($_SERVER['REQUEST_URI']));
+  exit();
+}
+```
+__________________
+
+### <a name="force-www"></a>Force WWW
+```
+RewriteEngine On
+RewriteCond %{HTTPS} off
+RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+```
 
 __________________
 
