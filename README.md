@@ -1,4 +1,4 @@
-
+<a name="top"></a>
 ## Wordpress
  - [Forced Trailing Slash](#wp-fts)
  - [Pardot/SF Integration](#wp-crm)
@@ -67,6 +67,7 @@ RewriteBase /
  RewriteRule ^(.*)$ https://www.DOMAIN.com/$1/ [L,R=301]
 ```
 
+[Back to Top](#top)
 __________________
 
 ### <a name="wp-crm"></a>WP CRM Integration
