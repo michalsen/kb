@@ -48,6 +48,8 @@ ________
            !preg_match('#wp-json#', $_SERVER['REQUEST_URI']) &&
            !preg_match('#rest_route#', $_SERVER['REQUEST_URI']) &&
            !preg_match('#sitemap#', $_SERVER['REQUEST_URI']) &&
+           !preg_match('#wp-login#', $_SERVER['REQUEST_URI']) &&
+           !preg_match('#admin#', $_SERVER['REQUEST_URI']) &&
            !preg_match('#adminlogin#', $_SERVER['REQUEST_URI'])) {
              header("HTTP/1.1 301 Moved Permanently");
              header("location: https://" . $_SERVER['HTTP_HOST'] . strtolower($_SERVER['REQUEST_URI'] . '/'));
