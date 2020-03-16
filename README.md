@@ -27,6 +27,7 @@
 - [Force WWW](#force-www)
 
 ## Resources
+- [.htaccess tester](https://htaccess.madewithlove.be/)
 - [.htaccess snippets](https://github.com/phanan/htaccess)
 - [Pantheon No CI](https://pantheon.io/docs/guides/drupal-8-composer-no-ci)
 - [Private repos in Composer](https://support.acquia.com/hc/en-us/articles/360004276834-How-to-access-Private-Repos-using-Composer)
