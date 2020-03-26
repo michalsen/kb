@@ -42,22 +42,35 @@ ________
 
 #### PHP
 ```php
-  if (!preg_match('/^\/$/', $_SERVER['REQUEST_URI']) && php_sapi_name() != 'cli') {
-     if(strrev($_SERVER['REQUEST_URI'])[0] !== '/'){
-       if (!preg_match('#wp-admin#', $_SERVER['REQUEST_URI']) &&
-           !preg_match('#wp-content#', $_SERVER['REQUEST_URI']) &&
-           !preg_match('#wp-json#', $_SERVER['REQUEST_URI']) &&
-           !preg_match('#rest_route#', $_SERVER['REQUEST_URI']) &&
-           !preg_match('#sitemap#', $_SERVER['REQUEST_URI']) &&
-           !preg_match('#wp-login#', $_SERVER['REQUEST_URI']) &&
-           !preg_match('#admin#', $_SERVER['REQUEST_URI']) &&
-           !preg_match('#adminlogin#', $_SERVER['REQUEST_URI'])) {
-             header("HTTP/1.1 301 Moved Permanently");
-             header("location: https://" . $_SERVER['HTTP_HOST'] . strtolower($_SERVER['REQUEST_URI'] . '/'));
-             exit();
-       }
-     }
-   }
+// FORCE TRAILING SLASH
+if (!preg_match('/^\/$/', $_SERVER['REQUEST_URI']) && php_sapi_name() != 'cli') {
+    if(strrev($_SERVER['REQUEST_URI'])[0] !== '/' ||
+       strrev($_SERVER['REQUEST_URI'])[1] == '/'){
+      if (!preg_match('#wp-admin#', $_SERVER['REQUEST_URI']) &&
+          !preg_match('#wp-content#', $_SERVER['REQUEST_URI']) &&
+          !preg_match('#wp-json#', $_SERVER['REQUEST_URI']) &&
+          !preg_match('#rest_route#', $_SERVER['REQUEST_URI']) &&
+          !preg_match('#sitemap#', $_SERVER['REQUEST_URI']) &&
+          !preg_match('#wp-login#', $_SERVER['REQUEST_URI']) &&
+          !preg_match('#admin#', $_SERVER['REQUEST_URI']) &&
+          !preg_match('#adminlogin#', $_SERVER['REQUEST_URI'])) {
+
+            // STRIP MULTIPLE TRAILING SLASHES
+            if (strrev($_SERVER['REQUEST_URI'])[1] == '/') {
+              $request = rtrim($_SERVER['REQUEST_URI'], '//\\');
+            }
+              else {
+              $request = $_SERVER['REQUEST_URI'];
+            }
+
+            $url = 'https://' . $_SERVER['HTTP_HOST'] . strtolower($request) . '/';
+
+            header("HTTP/1.1 301 Moved Permanently");
+            header("location:" . $url);
+            exit();
+      }
+    }
+  }
 ```
 #### .htaccess
 ```
